@@ -27,20 +27,12 @@ export default function WelcomePage() {
 
         <View style={styles.bottomSheet}>
           <View style={styles.buttonGroup}>
-            <TouchableOpacity style={styles.googleButton}>
-              <Image
-                source={{
-                  uri: 'https://lh3.googleusercontent.com/aida-public/AB6AXuCv2XScze20yCYqVOQHGqxU2HO6B9yL8fI7KRqONH8QKbVdjSkOjOvbhOUf3U2RvwuGVJWullrLavsxDunCWO2biu3oi7fQCVlLBbElBr6zf1yfEfjY4IzNH6exYNLG0KSHNUAjl0VwAtRw-fAzS5i2Iq3tuENvi1yzjFKuL97juXOKUnda-lyom3_pCbpM6pWI8F3gKDr9r3FEaT7emmmP54Z89POdNiD6YfsV_18Xocb2ctHa4-28OvOku3ebrUsxXbKQ6U38z1Aa',
-                }}
-                style={styles.googleLogo}
-              />
-              <Text style={styles.googleButtonText}>Continue with Google</Text>
-            </TouchableOpacity>
-
+            <Link href="./(auth)/sign-in" asChild>
             <TouchableOpacity style={styles.emailButton}>
               <MaterialIcons name="email" size={24} color="white" style={{ marginRight: 10 }} />
-              <Text style={styles.emailButtonText}>Sign in with Email</Text>
+              <Text style={styles.emailButtonText}>Sign In</Text>
             </TouchableOpacity>
+            </Link>
           </View>
 
           <Text style={styles.signupText}>

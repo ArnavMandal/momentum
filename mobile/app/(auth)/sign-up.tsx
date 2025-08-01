@@ -1,11 +1,19 @@
 import * as React from 'react'
-import { Text, TextInput, TouchableOpacity, View } from 'react-native'
+import {
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+  StyleSheet,
+  Alert,
+} from 'react-native'
 import { useSignUp } from '@clerk/clerk-expo'
 import { Link, useRouter } from 'expo-router'
 
 export default function SignUpScreen() {
   const { isLoaded, signUp, setActive } = useSignUp()
   const router = useRouter()
+
   const [emailAddress, setEmailAddress] = React.useState('')
   const [password, setPassword] = React.useState('')
   const [firstName, setFirstName] = React.useState('')
@@ -13,13 +21,10 @@ export default function SignUpScreen() {
   const [username, setUsername] = React.useState('')
   const [pendingVerification, setPendingVerification] = React.useState(false)
   const [code, setCode] = React.useState('')
-  // Handle submission of sign-up form
+
   const onSignUpPress = async () => {
     if (!isLoaded) return
 
-    console.log(emailAddress, password, firstName, lastName, username)
-
-    // Start sign-up process using email and password provided
     try {
       await signUp.create({
         emailAddress,
@@ -29,104 +34,162 @@ export default function SignUpScreen() {
         username,
       })
 
-      // Send user an email with verification code
       await signUp.prepareEmailAddressVerification({ strategy: 'email_code' })
-
-      // Set 'pendingVerification' to true to display second form
-      // and capture OTP code
       setPendingVerification(true)
     } catch (err) {
-      // See https://clerk.com/docs/custom-flows/error-handling
-      // for more info on error handling
       console.error(JSON.stringify(err, null, 2))
+      Alert.alert('Sign Up Failed')
     }
   }
 
-  // Handle submission of verification form
   const onVerifyPress = async () => {
     if (!isLoaded) return
 
     try {
-      // Use the code the user provided to attempt verification
       const signUpAttempt = await signUp.attemptEmailAddressVerification({
         code,
-      })      // If verification was completed, set the session to active
-      // and redirect the user
+      })
+
       if (signUpAttempt.status === 'complete') {
         await setActive({ session: signUpAttempt.createdSessionId })
         router.replace('/')
       } else {
-        // If the status is not complete, check why. User may need to
-        // complete further steps.
         console.error(JSON.stringify(signUpAttempt, null, 2))
       }
     } catch (err) {
-      // See https://clerk.com/docs/custom-flows/error-handling
-      // for more info on error handling
       console.error(JSON.stringify(err, null, 2))
+      Alert.alert('Verification Failed')
     }
   }
 
   if (pendingVerification) {
     return (
-      <>
-        <Text>Verify your email</Text>
+      <View style={styles.container}>
+        <Text style={styles.title}>Verify your email</Text>
         <TextInput
           value={code}
           placeholder="Enter your verification code"
-          onChangeText={(code) => setCode(code)}
+          placeholderTextColor="#9CA3AF"
+          onChangeText={setCode}
+          style={styles.input}
         />
-        <TouchableOpacity onPress={onVerifyPress}>
-          <Text>Verify</Text>
+        <TouchableOpacity onPress={onVerifyPress} style={styles.button}>
+          <Text style={styles.buttonText}>Verify</Text>
         </TouchableOpacity>
-      </>
+      </View>
     )
   }
 
   return (
-    <View>      <>
-        <Text>Sign up</Text>
-        
-        <TextInput
-          autoCapitalize="none"
-          value={emailAddress}
-          placeholder="Enter email"
-          onChangeText={(email) => setEmailAddress(email)}
-        />
-        <TextInput
-          value={password}
-          placeholder="Enter password"
-          secureTextEntry={true}
-          onChangeText={(password) => setPassword(password)}
-        />
-        <TextInput
-          value={firstName}
-          placeholder="Enter first name"
-          onChangeText={(firstName) => setFirstName(firstName)}
-        />
-        <TextInput
-          value={lastName}
-          placeholder="Enter last name"
-          onChangeText={(lastName) => setLastName(lastName)}
-        />
-        <TextInput
-          value={username}
-          placeholder="Enter username"
-          autoCapitalize="none"
-          onChangeText={(username) => setUsername(username)}
-        />        <TouchableOpacity onPress={onSignUpPress}>
-          <Text>Continue</Text>
-        </TouchableOpacity>
-        
-        <View style={{ display: 'flex', flexDirection: 'row', gap: 3 }}>
-          <Text>Already have an account?</Text>
-          <Link href="./sign-in" asChild>
-            <TouchableOpacity>
-              <Text>Sign in</Text>
-            </TouchableOpacity>
-          </Link>
-        </View>
-      </>
+    <View style={styles.container}>
+      <Text style={styles.title}>Sign up</Text>
+
+      <TextInput
+        autoCapitalize="none"
+        value={emailAddress}
+        placeholder="Enter email"
+        placeholderTextColor="#9CA3AF"
+        onChangeText={setEmailAddress}
+        style={styles.input}
+      />
+      <TextInput
+        value={password}
+        placeholder="Enter password"
+        secureTextEntry={true}
+        placeholderTextColor="#9CA3AF"
+        onChangeText={setPassword}
+        style={styles.input}
+      />
+      <TextInput
+        value={firstName}
+        placeholder="Enter first name"
+        placeholderTextColor="#9CA3AF"
+        onChangeText={setFirstName}
+        style={styles.input}
+      />
+      <TextInput
+        value={lastName}
+        placeholder="Enter last name"
+        placeholderTextColor="#9CA3AF"
+        onChangeText={setLastName}
+        style={styles.input}
+      />
+      <TextInput
+        value={username}
+        placeholder="Enter username"
+        autoCapitalize="none"
+        placeholderTextColor="#9CA3AF"
+        onChangeText={setUsername}
+        style={styles.input}
+      />
+
+      <TouchableOpacity onPress={onSignUpPress} style={styles.button}>
+        <Text style={styles.buttonText}>Continue</Text>
+      </TouchableOpacity>
+
+      <View style={styles.linkRow}>
+        <Text style={styles.footerText}>Already have an account? </Text>
+        <Link href="./sign-in" asChild>
+          <TouchableOpacity>
+            <Text style={styles.link}>Sign in</Text>
+          </TouchableOpacity>
+        </Link>
+      </View>
     </View>
   )
 }
+
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#111827', // Tailwind gray-900
+    paddingHorizontal: 24,
+    paddingTop: 60,
+  },
+  title: {
+    fontSize: 24,
+    color: 'white',
+    fontWeight: 'bold',
+    textAlign: 'center',
+    marginBottom: 24,
+  },
+  input: {
+    backgroundColor: '#1F2937', // gray-800
+    borderColor: '#374151', // gray-700
+    borderWidth: 1,
+    borderRadius: 8,
+    paddingHorizontal: 12,
+    paddingVertical: 12,
+    color: 'white',
+    fontSize: 16,
+    marginBottom: 16,
+  },
+  button: {
+    backgroundColor: '#4F46E5', // indigo-600
+    paddingVertical: 14,
+    borderRadius: 8,
+    alignItems: 'center',
+    marginTop: 8,
+    marginBottom: 24,
+  },
+  buttonText: {
+    color: 'white',
+    fontSize: 16,
+    fontWeight: '600',
+  },
+  linkRow: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    gap: 3,
+  },
+  footerText: {
+    color: '#9CA3AF',
+  },
+  link: {
+    color: '#6366F1', // indigo-500
+    fontWeight: '500',
+  },
+})
+
