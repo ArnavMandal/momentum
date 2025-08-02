@@ -1,5 +1,14 @@
 import { Link } from 'expo-router'
-import { Text, View, TouchableOpacity, StyleSheet, Image } from 'react-native'
+import React, { useEffect, useRef } from 'react'
+import {
+  Text,
+  View,
+  TouchableOpacity,
+  StyleSheet,
+  Image,
+  Animated,
+  Easing,
+} from 'react-native'
 import { useVideoPlayer, VideoView } from 'expo-video'
 import { MaterialIcons } from '@expo/vector-icons'
 
@@ -10,6 +19,18 @@ export default function WelcomePage() {
     player.loop = true
     player.play()
   })
+
+  const slideAnim = useRef(new Animated.Value(200)).current // Start off-screen (bottom)
+
+  useEffect(() => {
+    Animated.timing(slideAnim, {
+      toValue: 0,
+      duration: 1400,
+      delay: 1000,
+      easing: Easing.out(Easing.exp),
+      useNativeDriver: true,
+    }).start()
+  }, [])
 
   return (
     <View style={styles.container}>
@@ -25,13 +46,26 @@ export default function WelcomePage() {
           <Text style={styles.title}>M</Text>
         </View>
 
-        <View style={styles.bottomSheet}>
+        {/* Animated bottom sheet */}
+        <Animated.View
+          style={[
+            styles.bottomSheet,
+            {
+              transform: [{ translateY: slideAnim }],
+            },
+          ]}
+        >
           <View style={styles.buttonGroup}>
             <Link href="./(auth)/sign-in" asChild>
-            <TouchableOpacity style={styles.emailButton}>
-              <MaterialIcons name="email" size={24} color="white" style={{ marginRight: 10 }} />
-              <Text style={styles.emailButtonText}>Sign In</Text>
-            </TouchableOpacity>
+              <TouchableOpacity style={styles.emailButton}>
+                <MaterialIcons
+                  name="email"
+                  size={24}
+                  color="white"
+                  style={{ marginRight: 10 }}
+                />
+                <Text style={styles.emailButtonText}>Sign In</Text>
+              </TouchableOpacity>
             </Link>
           </View>
 
@@ -41,7 +75,7 @@ export default function WelcomePage() {
               <Text style={styles.signupLink}>Sign Up</Text>
             </Link>
           </Text>
-        </View>
+        </Animated.View>
       </View>
     </View>
   )
@@ -81,30 +115,10 @@ const styles = StyleSheet.create({
     padding: 24,
     borderTopLeftRadius: 30,
     borderTopRightRadius: 30,
-    backdropFilter: 'blur(10px)', // optional: if using expo-blur
+    backdropFilter: 'blur(10px)', // Optional if using expo-blur
   },
   buttonGroup: {
     gap: 16,
-  },
-  googleButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: 'white',
-    paddingVertical: 12,
-    borderRadius: 16,
-    shadowColor: '#000',
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-  },
-  googleLogo: {
-    width: 24,
-    height: 24,
-    marginRight: 10,
-  },
-  googleButtonText: {
-    fontWeight: '600',
-    color: '#333',
   },
   emailButton: {
     flexDirection: 'row',

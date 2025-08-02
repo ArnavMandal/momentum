@@ -1,6 +1,7 @@
 import { Slot} from "expo-router";
 import { ClerkLoaded,   ClerkProvider } from '@clerk/clerk-expo'
 import { tokenCache } from '@clerk/clerk-expo/token-cache'
+import HomePage from ".";
 
 export default function RootLayout() {
   const publishableKey = process.env.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY;
@@ -10,7 +11,7 @@ export default function RootLayout() {
   }
 
   return(
-    <ClerkProvider tokenCache={tokenCache}>
+    <ClerkProvider publishableKey={publishableKey} tokenCache={tokenCache}>
       <ClerkLoaded>
         <Slot />
       </ClerkLoaded>
