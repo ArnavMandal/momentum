@@ -1,0 +1,15 @@
+{
+  "dev": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-momentumbackend-dev-ed276-authRole",
+      "UnauthRoleArn": "arn:aws:iam::151376009243:role/amplify-momentumbackend-dev-ed276-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::151376009243:role/amplify-momentumbackend-dev-ed276-authRole",
+      "Region": "us-east-1",
+      "DeploymentBucketName": "amplify-momentumbackend-dev-ed276-deployment",
+      "UnauthRoleName": "amplify-momentumbackend-dev-ed276-unauthRole",
+      "StackName": "amplify-momentumbackend-dev-ed276",
+      "StackId": "arn:aws:cloudformation:us-east-1:151376009243:stack/amplify-momentumbackend-dev-ed276/f2853540-6e84-11f0-83b1-0affcc629d1d",
+      "AmplifyAppId": "d2nf886wfjwx17"
+    }
+  }
+}
